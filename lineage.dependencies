@@ -1,7 +1,7 @@
 [
   {
-    "repository": "djeman/android_kernel_samsung_j3xnlte",
-    "target_path": "kernel/samsung/j3xnlte",
+    "repository": "djeman/android_kernel_samsung_sharkls",
+    "target_path": "kernel/samsung/sharkls",
     "revision": "cm-14.1"
   },
   {
