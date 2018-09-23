@@ -26,10 +26,10 @@ index 0570ca0..81660a9 100644
  
  __END_DECLS
 diff --git a/init/builtins.cpp b/init/builtins.cpp
-index 7320b91..f8c0847 100755
+index 949e139..58eac5f 100755
 --- a/init/builtins.cpp
 +++ b/init/builtins.cpp
-@@ -1139,6 +1139,15 @@ static int do_wait(const std::vector<std::string>& args) {
+@@ -1149,6 +1149,15 @@ static int do_wait(const std::vector<std::string>& args) {
          return -1;
  }
  
@@ -45,7 +45,7 @@ index 7320b91..f8c0847 100755
  /*
   * Callback to make a directory from the ext4 code
   */
-@@ -1210,6 +1219,7 @@ BuiltinFunctionMap::Map& BuiltinFunctionMap::map() const {
+@@ -1221,6 +1230,7 @@ BuiltinFunctionMap::Map& BuiltinFunctionMap::map() const {
          {"verity_load_state",       {0,     0,    do_verity_load_state}},
          {"verity_update_state",     {0,     0,    do_verity_update_state}},
          {"wait",                    {1,     2,    do_wait}},
