@@ -79,6 +79,8 @@
 /dev/block/platform/sdio_emmc/by-name/efs u:object_r:efs_block_device:s0
 /dev/block/platform/sdio_emmc/by-name/prodnv u:object_r:prod_block_device:s0
 
+/dev/block/vnswap[0-9]*  u:object_r:vnswap_block_device:s0
+
 /dev/gnss_download        u:object_r:wcn_device:s0
 /dev/gnss_dbg        u:object_r:wcn_device:s0
 /dev/slog_gnss           u:object_r:slog_device:s0
