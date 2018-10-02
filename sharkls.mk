@@ -253,6 +253,8 @@ PRODUCT_PACKAGES += \
     libgpsshim
 
 PRODUCT_PACKAGES += \
+    batterysrv \
+    calibration_init \
     camera.sc8830 \
     power.sc8830 \
     libcamoem \
