@@ -60,6 +60,8 @@
 /dev/block/mmcblk0p22    u:object_r:frp_block_device:s0
 /dev/block/mmcblk0p23    u:object_r:persist_block_device:s0
 /dev/block/mmcblk0p24    u:object_r:cache_block_device:s0
+/dev/block/mmcblk0p27    u:object_r:userdata_block_device:s0
+/dev/block/mmcblk0p25    u:object_r:system_block_device:s0
 /dev/block/mmcblk1p1    u:object_r:mmcblk_device:s0
 /dev/sprd_efuse_otp      u:object_r:efuse_device:s0
 /dev/slog_wcn            u:object_r:slog_device:s0
@@ -78,6 +80,8 @@
 /dev/block/platform/sdio_emmc/by-name/RECOVERY u:object_r:recovery_block_device:s0
 /dev/block/platform/sdio_emmc/by-name/efs u:object_r:efs_block_device:s0
 /dev/block/platform/sdio_emmc/by-name/prodnv u:object_r:prod_block_device:s0
+/dev/block/platform/sdio_emmc/by-name/userdata u:object_r:userdata_block_device:s0
+/dev/block/platform/sdio_emmc/by-name/SYSTEM u:object_r:system_block_device:s0
 
 /dev/block/vnswap[0-9]*  u:object_r:vnswap_block_device:s0
 
@@ -117,7 +121,7 @@
 /system/bin/smdexe             u:object_r:smdexe_exec:s0
 /sbin/sswap                    u:object_r:sswap_exec:s0
 
-/system/bin/batterysrv u:object_r:batterysrv_exec:s0
+/system/bin/batterysrv  u:object_r:batterysrv_exec:s0
 /system/bin/gpsd        u:object_r:gpsd_exec:s0
 /system/bin/cmd_services       u:object_r:cmd_services_exec:s0
 /system/bin/modemDriver_vpad_main u:object_r:modemdriver_vpad_exec:s0
