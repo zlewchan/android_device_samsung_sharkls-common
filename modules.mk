@@ -2,6 +2,17 @@
 SPRD_MODULES_CCOMPILE := $(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-4.8/bin/arm-eabi-
 
 SPRD_MODULES:
+	$(hide) if grep -q '^CONFIG_MODULES=y' $(KERNEL_CONFIG); then \
+			echo "Installing Kernel Modules"; \
+			$(MAKE) $(MAKE_FLAGS) -C $(KERNEL_SRC) O=$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) INSTALL_MOD_PATH=../../$(KERNEL_MODULES_INSTALL) modules_install && \
+			mofile=$$(find $(KERNEL_MODULES_OUT) -type f -name modules.order) && \
+			mpath=$$(dirname $$mofile) && \
+			for f in $$(find $$mpath/kernel -type f -name '*.ko'); do \
+				$(KERNEL_TOOLCHAIN_PATH)strip --strip-unneeded $$f; \
+				mv $$f $(KERNEL_MODULES_OUT); \
+			done && \
+			rm -rf $$mpath; \
+		fi
 	make -C vendor/sprd/modules/libgpu/gpu/utgard/ MALI_PLATFORM=sc8830 BUILD=debug KDIR=$(KERNEL_OUT) CROSS_COMPILE=$(SPRD_MODULES_CCOMPILE) clean
 	make -C vendor/sprd/modules/libgpu/gpu/utgard/ MALI_PLATFORM=sc8830 BUILD=debug KDIR=$(KERNEL_OUT) CROSS_COMPILE=$(SPRD_MODULES_CCOMPILE)
 	mv vendor/sprd/modules/libgpu/gpu/utgard/mali.ko $(KERNEL_MODULES_OUT)
