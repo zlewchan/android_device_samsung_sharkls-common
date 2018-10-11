@@ -69,6 +69,7 @@
 /dev/gpsctl            0660     system  system
 /dev/ttyS*             0660     system  system
 
+/dev/fm                 0660     system      media
 /dev/Trout_FM           0660     system      audio
 /dev/ecompass_ctrl      0666     system      compass
 /dev/mxc622x            0666     system      input
