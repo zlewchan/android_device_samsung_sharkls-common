@@ -246,6 +246,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     Snap
 
+#FM
+PRODUCT_PACKAGES += \
+    FMRadio \
+    libfmjni \
+    libfmcust
+
 PRODUCT_PACKAGES += \
     charger_res_images
 
