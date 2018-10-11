@@ -48,9 +48,11 @@ public class SlteRIL extends RIL {
 
     private static final int RIL_REQUEST_DIAL_EMERGENCY_CALL = 10001;
 
+    private static final int RIL_UNSOL_DEVICE_READY_NOTI = 11008;
     private static final int RIL_UNSOL_GPS_NOTI = 11009;
     private static final int RIL_UNSOL_AM = 11010;
     private static final int RIL_UNSOL_UART = 11020;
+    private static final int RIL_UNSOL_SIM_PB_READY = 11021;
     private static final int RIL_UNSOL_VE = 11024;
     private static final int RIL_UNSOL_PB_INIT_COMPLETE = 11035;
 
@@ -287,7 +289,9 @@ public class SlteRIL extends RIL {
         response = p.readInt();
 
         try {switch(response) {
+            case RIL_UNSOL_DEVICE_READY_NOTI: ret = responseVoid(p); break;
             case RIL_UNSOL_GPS_NOTI: ret = responseVoid(p); break;
+            case RIL_UNSOL_SIM_PB_READY: ret = responseVoid(p); break;
             case RIL_UNSOL_AM: ret = responseString(p); break;
             case RIL_UNSOL_UART: ret = responseRaw(p); break;
             case RIL_UNSOL_VE: ret = responseRaw(p); break;
