@@ -124,8 +124,70 @@ index b685b68..cff81c3 100644
  LOCAL_SRC_FILES := \
      fmr_core.cpp \
      fmr_err.cpp \
+diff --git a/FMRadio/jni/fmr/common.cpp b/FMRadio/jni/fmr/common.cpp
+index 859d3b3..ed3069c 100644
+--- a/FMRadio/jni/fmr/common.cpp
++++ b/FMRadio/jni/fmr/common.cpp
+@@ -407,6 +407,22 @@ int COM_get_chip_id(int fd, int *chipid)
+     return ret;
+ }
+ 
++int COM_get_rssi(int fd, int *rssi)
++{
++    int ret = 0;
++    int32_t tmp = 0;
++
++    FMR_ASSERT(rssi);
++
++    ret = ioctl(fd, FM_IOCTL_GETRSSI, &tmp);
++    *rssi = (int)tmp;
++    if (ret) {
++        LOGE("%s, failed\n", __func__);
++    }
++    LOGD("%s, [fd=%d] [rssi=%x] [ret=%d]\n", __func__, fd, *rssi, ret);
++    return ret;
++}
++
+ int COM_read_rds_data(int fd, RDSData_Struct *rds, uint16_t *rds_status)
+ {
+     int ret = 0;
+@@ -428,7 +444,7 @@ int COM_read_rds_data(int fd, RDSData_Struct *rds, uint16_t *rds_status)
+         return ret;
+     } else {
+         //LOGE("readrds get no event\n");
+-        ret = -ERR_RDS_NO_DATA;
++       ret = -ERR_RDS_NO_DATA;
+     }
+     return ret;
+ }
+@@ -568,11 +584,13 @@ void FM_interface_init(struct fm_cbk_tbl *cbk_tbl)
+     cbk_tbl->close_dev = COM_close_dev;
+     cbk_tbl->pwr_up = COM_pwr_up;
+     cbk_tbl->pwr_down = COM_pwr_down;
++    cbk_tbl->seek = COM_seek;
+     cbk_tbl->tune = COM_tune;
+     cbk_tbl->set_mute = COM_set_mute;
+     cbk_tbl->is_rdsrx_support = COM_is_rdsrx_support;
+     cbk_tbl->turn_on_off_rds = COM_turn_on_off_rds;
+     cbk_tbl->get_chip_id = COM_get_chip_id;
++    cbk_tbl->get_rssi = COM_get_rssi;
+     //For RDS RX.
+     cbk_tbl->read_rds_data = COM_read_rds_data;
+     cbk_tbl->get_ps = COM_get_ps;
+diff --git a/FMRadio/jni/fmr/fmr.h b/FMRadio/jni/fmr/fmr.h
+index 9c2ca6f..6d16630 100644
+--- a/FMRadio/jni/fmr/fmr.h
++++ b/FMRadio/jni/fmr/fmr.h
+@@ -109,6 +109,7 @@ struct fm_cbk_tbl {
+     int (*is_rdsrx_support)(int fd, int *supt);
+     int (*turn_on_off_rds)(int fd, int onoff);
+     int (*get_chip_id)(int fd, int *chipid);
++    int (*get_rssi)(int fd, int *rssi);
+     //FOR RDS RX.
+     int (*read_rds_data)(int fd, RDSData_Struct *rds, uint16_t *rds_status);
+     int (*get_ps)(int fd, RDSData_Struct *rds, uint8_t **ps, int *ps_len);
 diff --git a/FMRadio/jni/fmr/fmr_core.cpp b/FMRadio/jni/fmr/fmr_core.cpp
-index 10c2511..aaa30a3 100644
+index 10c2511..0fb73e7 100644
 --- a/FMRadio/jni/fmr/fmr_core.cpp
 +++ b/FMRadio/jni/fmr/fmr_core.cpp
 @@ -29,6 +29,12 @@
@@ -201,7 +263,195 @@ index 10c2511..aaa30a3 100644
      }
      fmr_data.cur_freq = freq;
      LOGD("%s, [ret=%d]\n", __func__, ret);
-@@ -841,3 +870,119 @@ int FMR_ana_switch(int idx, int antenna)
+@@ -225,6 +254,22 @@ int FMR_get_chip_id(int idx, int *chipid)
+     return ret;
+ }
+ 
++int FMR_get_rssi(int idx, int *rssi)
++{
++    int ret = 0;
++
++    FMR_ASSERT(FMR_cbk_tbl(idx).get_rssi);
++    FMR_ASSERT(rssi);
++
++    ret = FMR_cbk_tbl(idx).get_rssi(FMR_fd(idx), rssi);
++    if (ret) {
++        LOGE("%s failed, %s\n", __func__, FMR_strerr());
++        *rssi = -1;
++    }
++    LOGD("%s, [ret=%d]\n", __func__, ret);
++    return ret;
++}
++
+ int FMR_get_ps(int idx, uint8_t **ps, int *ps_len)
+ {
+     int ret = 0;
+@@ -282,7 +327,7 @@ fm_bool FMR_SevereDensense(fm_u16 ChannelNo, fm_s32 RSSI)
+     fm_s32 i = 0, j = 0;
+     struct fm_fake_channel_t *chan_info = fmr_data.cfg_data.fake_chan;
+ 
+-    ChannelNo /= 10;
++    //ChannelNo /= 10;
+ 
+     for (i=0; i<chan_info->size; i++) {
+         if (ChannelNo == chan_info->chan[i].freq) {
+@@ -523,7 +568,17 @@ int FMR_seek(int idx, int start_freq, int dir, int *ret_freq)
+     fmr_data.scan_stop = fm_false;
+     LOGD("seek start freq %d band_channel_no=[%d], seek_space=%d band[%d - %d] dir=%d\n", start_freq, band_channel_no,seek_space,min_freq,max_freq,dir);
+ 
+-    ret = FMR_seek_Channel(idx, start_freq, min_freq, max_freq, band_channel_no, seek_space, dir, ret_freq, &rssi);
++    //ret = FMR_seek_Channel(idx, start_freq, min_freq, max_freq, band_channel_no, seek_space, dir, ret_freq, &rssi);
++ 
++    int tmp_freq = (dir == 1)?  (start_freq/ 10 + 1) : (start_freq / 10 - 1) ;
++    ret = FMR_cbk_tbl(idx).seek(FMR_fd(idx), &tmp_freq, 0, !dir, 0);
++    LOGE("hardware seek, ret: %d, current freq: %d\n",ret, tmp_freq);
++
++    if (0 == ret) {
++        *ret_freq = (tmp_freq * 10);
++        LOGD("hardware seek, ret: %d, ret freq: %d\n",ret, *ret_freq);
++        ret = FMR_tune(idx, tmp_freq);
++    }
+ 
+     return ret;
+ }
+@@ -578,6 +633,7 @@ int FMR_Restore_Search(int idx)
+     return 0;
+ }
+ 
++#if 0 /*orignal code, SPRD use hardware seek instead of software tune in case of scan channel */
+ int FMR_scan_Channels(int idx, uint16_t *scan_tbl, int *max_cnt, fm_s32 band_channel_no, fm_u16 Start_Freq, fm_u8 seek_space, fm_u8 NF_Space)
+ {
+     fm_s32 ret = 0, Num = 0, i, j;
+@@ -732,13 +788,98 @@ int FMR_scan_Channels(int idx, uint16_t *scan_tbl, int *max_cnt, fm_s32 band_cha
+     LOGI("return channel no.[%d] \n", ChannelNo);
+     return 0;
+ }
++#endif
++
++int FMR_seek_Channels(int idx, uint16_t *scan_tbl, int *max_cnt, fm_s32 band_channel_no, fm_u16 Start_Freq, fm_u8 seek_space, fm_u8 NF_Space)
++{
++    fm_s32 ret = 0, Num = 0, i=0, j;
++    fm_u32 ChannelNo = 0;
++    fm_softmute_tune_t cur_freq;
++    static struct fm_cqi SortData[CQI_CH_NUM_MAX];
++    struct fm_cqi swap;
++    fm_u32 LastValidFreq = 0;
++
++    memset(SortData, 0, CQI_CH_NUM_MAX*sizeof(struct fm_cqi));
++    memset(&cur_freq, 0, sizeof(fm_softmute_tune_t));
++    LOGI("band_channel_no=[%d], seek_space=%d, start freq=%d\n", band_channel_no,seek_space,Start_Freq);
++
++    cur_freq.freq = Start_Freq;
++
++    if (FMR_low_band(idx)  == Start_Freq)
++         cur_freq.freq -= 1;
++
++    while(LastValidFreq < cur_freq.freq){
++        if (fmr_data.scan_stop == fm_true) {
++            FMR_Restore_Search(idx);
++            // here may use to reset the freq
++            ret = FMR_tune(idx, fmr_data.cur_freq);
++
++            LOGI("scan stop!!! tune ret=%d",ret);
++            return -1;
++        }
++
++        LastValidFreq = cur_freq.freq;
++
++        cur_freq.freq += 1;
++
++        ret = FMR_cbk_tbl(idx).seek(FMR_fd(idx), (int *)&cur_freq.freq, 0, 0, 0);
++        LOGE("hardware seek, ret: %d, current freq: %d, last freq: %d\n",ret, cur_freq.freq, LastValidFreq);
++
++        if (0 != ret || LastValidFreq >= cur_freq.freq) {
++            LOGE("hardware scan stop:[%d]\n",ret);
++            continue;
++        }
++
++        LOGI("FMR_scan_Channels try %d, freq: %d, is valid: %d ", i++, cur_freq.freq, cur_freq.valid);
++		
++
++        if (FMR_DensenseDetect(idx, cur_freq.freq, cur_freq.rssi) == fm_true) {
++                LOGI("desense channel detected:[%d] \n", cur_freq.freq);
++                continue;
++        }
++           
++        if (FMR_SevereDensense(cur_freq.freq, cur_freq.rssi) == fm_true) {
++                LOGI("FMR_SevereDensense channel detected:[%d] \n", cur_freq.freq);
++                continue;
++        }
++        SortData[Num].ch = cur_freq.freq;
++        SortData[Num].rssi = cur_freq.rssi;
++        SortData[Num].reserve = 1;
++        Num++;
++
++        LOGI("Num++:[%d] \n", Num);
++    }
++	
++    LOGI("get channel no.[%d] \n", Num);
++    if (Num == 0)/*get nothing*/ {
++        *max_cnt = 0;
++        FMR_Restore_Search(idx);
++        return -1;
++    }
++	
++    for (i=0; i<Num; i++)/*debug*/ {
++        LOGI("[%d]:%d \n", i,SortData[i].ch);
++    }
++
++    ChannelNo = 0;
++    for (i=0; i<Num; i++) {
++        if (SortData[i].reserve == 1) {
++            scan_tbl[ChannelNo]=SortData[i].ch;
++            ChannelNo++;
++        }
++    }
++    *max_cnt=ChannelNo;
++
++    LOGI("return channel no.[%d] \n", ChannelNo);
++    return 0;
++}
+ 
+ int FMR_scan(int idx, uint16_t *scan_tbl, int *max_cnt)
+ {
+     fm_s32 ret = 0;
+     fm_s32 band_channel_no = 0;
+     fm_u8 seek_space = 10;
+-    fm_u16 Start_Freq = 8750;
++    fm_u16 Start_Freq = 875;
+     fm_u8 NF_Space = 41;
+ 
+     //FM radio seek space,5:50KHZ; 1:100KHZ; 2:200KHZ
+@@ -750,20 +891,21 @@ int FMR_scan(int idx, uint16_t *scan_tbl, int *max_cnt)
+         seek_space = 10;
+     }
+     if (fmr_data.cfg_data.band == FM_BAND_JAPAN)/* Japan band      76MHz ~ 90MHz */ {
+-        band_channel_no = (9600-7600)/seek_space + 1;
+-        Start_Freq = 7600;
++        band_channel_no = (960-760)/seek_space + 1;
++        Start_Freq = 760;
+         NF_Space = 400/seek_space;
+     } else if (fmr_data.cfg_data.band == FM_BAND_JAPANW)/* Japan wideband  76MHZ ~ 108MHz */ {
+-        band_channel_no = (10800-7600)/seek_space + 1;
+-        Start_Freq = 7600;
++        band_channel_no = (1080-760)/seek_space + 1;
++        Start_Freq = 760;
+         NF_Space = 640/seek_space;
+     } else/* US/Europe band  87.5MHz ~ 108MHz (DEFAULT) */ {
+-        band_channel_no = (10800-8750)/seek_space + 1;
+-        Start_Freq = 8750;
++        band_channel_no = (1080-875)/seek_space + 1;
++        Start_Freq = 875;
+         NF_Space = 410/seek_space;
+     }
+ 
+-    ret = FMR_scan_Channels(idx, scan_tbl, max_cnt, band_channel_no, Start_Freq, seek_space, NF_Space);
++    // SPRD: we use hardware seek instead of software tune when scan channels
++    ret = FMR_seek_Channels(idx, scan_tbl, max_cnt, band_channel_no, Start_Freq, seek_space, NF_Space);
+ 
+     return ret;
+ }
+@@ -841,3 +983,119 @@ int FMR_ana_switch(int idx, int antenna)
      return ret;
  }
  
