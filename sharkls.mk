@@ -258,6 +258,18 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libgpsshim
 
+# Stagefright SPRD
+PRODUCT_PACKAGES += \
+    libstagefright_sprd_h264dec \
+    libstagefright_sprd_h264enc \
+    libstagefright_sprd_mp3dec \
+    libstagefright_sprd_mpeg4dec \
+    libstagefright_sprd_mpeg4enc \
+    libstagefright_sprd_vpxdec \
+    libstagefright_sprd_soft_h264dec \
+    libstagefright_sprd_soft_mpeg4dec \
+    libstagefrighthw
+
 PRODUCT_PACKAGES += \
     batterysrv \
     calibration_init \
@@ -272,15 +284,6 @@ PRODUCT_PACKAGES += \
     libion \
     libmemoryheapion \
     libefuse \
-    libomxil-bellagio \
-    libstagefright_sprd_h264dec \
-    libstagefright_sprd_h264enc \
-    libstagefright_sprd_mp3dec \
-    libstagefright_sprd_mpeg4dec \
-    libstagefright_sprd_mpeg4enc \
-    libstagefright_sprd_soft_h264dec \
-    libstagefright_sprd_soft_mpeg4dec \
-    libstagefright_sprd_vpxdec \
     libdumpdata \
     libnvexchange \
     libvbpga \
@@ -289,9 +292,6 @@ PRODUCT_PACKAGES += \
     libatchannel \
     audio_policy.sc8830 \
     libaudioresampler \
-    libstagefrighthw_cm \
-    libstagefrighthw \
-    libomxvpu \
     liboemcrypto \
     modem_control \
     cp_diskserver \
