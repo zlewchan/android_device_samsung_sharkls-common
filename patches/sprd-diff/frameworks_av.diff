@@ -124,18 +124,6 @@ index f00b8b7..9b7285a 100644
      if (err != OK) {
          ALOGW("configure returned error %d (%s)", err, asString(err));
          decoder->release();
-diff --git a/media/libstagefright/omx/OMXMaster.cpp b/media/libstagefright/omx/OMXMaster.cpp
-index 2d2d500..4e8b971 100644
---- a/media/libstagefright/omx/OMXMaster.cpp
-+++ b/media/libstagefright/omx/OMXMaster.cpp
-@@ -64,6 +64,7 @@ OMXMaster::~OMXMaster() {
- }
- 
- void OMXMaster::addVendorPlugin() {
-+    addPlugin("libstagefrighthw_cm.so");
-     addPlugin("libstagefrighthw.so");
- }
- 
 diff --git a/media/libstagefright/wifi-display/source/Converter.cpp b/media/libstagefright/wifi-display/source/Converter.cpp
 index 471152e..67ee7d5 100644
 --- a/media/libstagefright/wifi-display/source/Converter.cpp
