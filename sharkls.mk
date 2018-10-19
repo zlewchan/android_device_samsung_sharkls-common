@@ -107,30 +107,6 @@ PRODUCT_PACKAGES += \
     tinymix \
     tinypcminfo
 
-PRODUCT_PACKAGES += \
-    libjackshm \
-    libjackserver \
-    libjack \
-    libjacklogger \
-    androidshmservice \
-    jackd \
-    jack_dummy \
-    jack_alsa \
-    jack_opensles \
-    jack_loopback \
-    in \
-    out \
-    jack_connect \
-    jack_disconnect \
-    jack_lsp \
-    jack_showtime \
-    jack_simple_client \
-    jack_transport \
-    libasound \
-    libglib-2.0 \
-    libgthread-2.0 \
-    libfluidsynth
-
 # Misc. libs
 PRODUCT_PACKAGES += \
     libstlport \
