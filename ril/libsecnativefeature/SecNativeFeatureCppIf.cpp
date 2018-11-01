@@ -7,6 +7,8 @@
 
 #include "SecNativeFeatureCppIf.h"
 
+#include "SecNativeFeatureTagAll.h"
+
 // feature file location (which should be "/data/omc/others.xml")
 #define OMC_MPS_FEATURE_XML "/data/omc/others.xml"
 // feature file location (which should be "/system/csc/feature.xml")
@@ -141,6 +143,9 @@ int SecNativeFeature::getInteger(const char* tag) {
 	found = _features.find(tag);
 
 	if (found == _features.end()) {
+		if (strcmp(tag, TAG_CSCFEATURE_RIL_CONFIGRILVERSION) == 0) {
+			return 11;
+		}
 		return -1;
 	}
 	std::string raw_value = _features.find(tag)->second;
@@ -152,6 +157,9 @@ int SecNativeFeature::getInteger(const char* tag, int defaultValue) {
 	found = _features.find(tag);
 
 	if (found == _features.end()) {
+		if (strcmp(tag, TAG_CSCFEATURE_RIL_CONFIGRILVERSION) == 0) {
+			return 11;
+		}
 		return defaultValue;
 	}
 	std::string raw_value = _features.find(tag)->second;

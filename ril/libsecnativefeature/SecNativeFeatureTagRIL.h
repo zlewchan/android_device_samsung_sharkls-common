@@ -49,6 +49,7 @@
 #define TAG_CSCFEATURE_RIL_USEMPSFORIMSSETTING            "CscFeature_RIL_UseMpsForImsSetting"
 #define TAG_CSCFEATURE_RIL_USERATINFODURINGPLMNSELECTION  "CscFeature_RIL_UseRatInfoDuringPlmnSelection"
 #define TAG_CSCFEATURE_RIL_USSDROUTINGPOLICY              "CscFeature_RIL_UssdRoutingPolicy"
+#define TAG_CSCFEATURE_RIL_CONFIGRILVERSION               "CscFeature_RIL_ConfigRilVersion"
 
 #endif // SEC_NATIVE_FEATURE_TAG_FRAMEWORK_H
 
