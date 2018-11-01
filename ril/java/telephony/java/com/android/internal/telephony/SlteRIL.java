@@ -48,6 +48,7 @@ public class SlteRIL extends RIL {
 
     private static final int RIL_REQUEST_DIAL_EMERGENCY_CALL = 10001;
 
+    private static final int RIL_UNSOL_STK_SEND_SMS_RESULT = 11002;
     private static final int RIL_UNSOL_DEVICE_READY_NOTI = 11008;
     private static final int RIL_UNSOL_GPS_NOTI = 11009;
     private static final int RIL_UNSOL_AM = 11010;
@@ -289,6 +290,7 @@ public class SlteRIL extends RIL {
         response = p.readInt();
 
         try {switch(response) {
+            case RIL_UNSOL_STK_SEND_SMS_RESULT: ret = responseInts(p); break;
             case RIL_UNSOL_DEVICE_READY_NOTI: ret = responseVoid(p); break;
             case RIL_UNSOL_GPS_NOTI: ret = responseVoid(p); break;
             case RIL_UNSOL_SIM_PB_READY: ret = responseVoid(p); break;
@@ -310,6 +312,15 @@ public class SlteRIL extends RIL {
         }
 
         switch (response) {
+            case RIL_UNSOL_STK_SEND_SMS_RESULT:
+                if (RILJ_LOGD) unsljLog(response);
+
+                if (mCatSendSmsResultRegistrant != null) {
+                    mCatSendSmsResultRegistrant.notifyRegistrant(
+                                                new AsyncResult(null, ret, null));
+                }
+                break;
+
             case RIL_UNSOL_AM:
                 String strAm = (String)ret;
                 // Add debug to check if this wants to execute any useful am command
