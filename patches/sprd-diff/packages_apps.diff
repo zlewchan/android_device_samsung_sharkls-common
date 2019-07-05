@@ -1,5 +1,5 @@
-diff --git a/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java b/app/src/main/java/org/lineageos/jelly/MainActivity.java
-index aa2370d..4c3a284 100644
+diff --git a/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java b/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java
+index 7c44c67..8762a7f 100644
 --- a/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java
 +++ b/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java
 @@ -63,6 +63,7 @@ import android.view.WindowManager;
@@ -10,7 +10,7 @@ index aa2370d..4c3a284 100644
  import android.webkit.WebChromeClient;
  import android.widget.AutoCompleteTextView;
  import android.widget.EditText;
-@@ -117,6 +118,7 @@ public class MainActivity extends WebViewExtActivity implements
+@@ -114,6 +115,7 @@ public class MainActivity extends WebViewExtActivity implements
          }
      };
  
@@ -18,7 +18,7 @@ index aa2370d..4c3a284 100644
      private CoordinatorLayout mCoordinator;
      private WebViewExt mWebView;
      private ProgressBar mLoadingProgress;
-@@ -637,8 +639,8 @@ public class MainActivity extends WebViewExtActivity implements
+@@ -624,8 +626,8 @@ public class MainActivity extends WebViewExtActivity implements
          mCustomView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
          addContentView(mCustomView, new ViewGroup.LayoutParams(
                  ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -29,7 +29,7 @@ index aa2370d..4c3a284 100644
      }
  
      @Override
-@@ -648,13 +650,15 @@ public class MainActivity extends WebViewExtActivity implements
+@@ -635,13 +637,15 @@ public class MainActivity extends WebViewExtActivity implements
          }
          getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
          setImmersiveMode(false);
@@ -47,7 +47,7 @@ index aa2370d..4c3a284 100644
      }
  
      private void addShortcut() {
-@@ -730,4 +734,16 @@ public class MainActivity extends WebViewExtActivity implements
+@@ -717,4 +721,16 @@ public class MainActivity extends WebViewExtActivity implements
              }
          }
      }
@@ -64,11 +64,11 @@ index aa2370d..4c3a284 100644
 +        }
 +    }
  }
-diff --git a/Jelly/app/src/main/java/org/lineageos/jelly/webview/ChromeClient.java b/app/src/main/java/org/lineageos/jelly/webview/ChromeClient.java
-index acf91be..1a2fd46 100644
+diff --git a/Jelly/app/src/main/java/org/lineageos/jelly/webview/ChromeClient.java b/Jelly/app/src/main/java/org/lineageos/jelly/webview/ChromeClient.java
+index b5aabf5..e51955f 100644
 --- a/Jelly/app/src/main/java/org/lineageos/jelly/webview/ChromeClient.java
 +++ b/Jelly/app/src/main/java/org/lineageos/jelly/webview/ChromeClient.java
-@@ -76,9 +76,10 @@ class ChromeClient extends WebChromeClientCompat {
+@@ -79,9 +79,10 @@ class ChromeClient extends WebChromeClientCompat {
      @Override
      public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> path,
                                       FileChooserParams params) {
@@ -81,7 +81,7 @@ index acf91be..1a2fd46 100644
          } catch (ActivityNotFoundException e) {
              Toast.makeText(mActivity, mActivity.getString(R.string.error_no_activity_found),
                      Toast.LENGTH_LONG).show();
-diff --git a/Jelly/app/src/main/java/org/lineageos/jelly/webview/WebViewExtActivity.java b/app/src/main/java/org/lineageos/jelly/webview/WebViewExtActivity.java
+diff --git a/Jelly/app/src/main/java/org/lineageos/jelly/webview/WebViewExtActivity.java b/Jelly/app/src/main/java/org/lineageos/jelly/webview/WebViewExtActivity.java
 index dcf02d4..0b90eb1 100644
 --- a/Jelly/app/src/main/java/org/lineageos/jelly/webview/WebViewExtActivity.java
 +++ b/Jelly/app/src/main/java/org/lineageos/jelly/webview/WebViewExtActivity.java
