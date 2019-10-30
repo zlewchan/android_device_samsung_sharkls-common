@@ -14,7 +14,7 @@ index b370cc0..e158d07 100644
  
  bluetooth_CFLAGS += -DEXPORT_SYMBOL="__attribute__((visibility(\"default\")))"
 diff --git a/device/src/controller.c b/device/src/controller.c
-index 9433ff9..f3df170 100644
+index 60820c2..ffad916 100644
 --- a/device/src/controller.c
 +++ b/device/src/controller.c
 @@ -212,11 +212,13 @@ static future_t *start_up(void) {
@@ -45,5 +45,5 @@ index 9433ff9..f3df170 100644
    }
 +#endif
  
-   readable = true;
-   return future_new_immediate(FUTURE_SUCCESS);
+   assert(HCI_READ_ENCR_KEY_SIZE_SUPPORTED(supported_commands));
+ 
