@@ -1,5 +1,5 @@
 diff --git a/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java b/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java
-index 7c44c67..8762a7f 100644
+index 2be7a52..50d5bbb 100644
 --- a/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java
 +++ b/Jelly/app/src/main/java/org/lineageos/jelly/MainActivity.java
 @@ -63,6 +63,7 @@ import android.view.WindowManager;
@@ -18,7 +18,7 @@ index 7c44c67..8762a7f 100644
      private CoordinatorLayout mCoordinator;
      private WebViewExt mWebView;
      private ProgressBar mLoadingProgress;
-@@ -624,8 +626,8 @@ public class MainActivity extends WebViewExtActivity implements
+@@ -622,8 +624,8 @@ public class MainActivity extends WebViewExtActivity implements
          mCustomView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
          addContentView(mCustomView, new ViewGroup.LayoutParams(
                  ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -29,7 +29,7 @@ index 7c44c67..8762a7f 100644
      }
  
      @Override
-@@ -635,13 +637,15 @@ public class MainActivity extends WebViewExtActivity implements
+@@ -633,13 +635,15 @@ public class MainActivity extends WebViewExtActivity implements
          }
          getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
          setImmersiveMode(false);
@@ -47,7 +47,7 @@ index 7c44c67..8762a7f 100644
      }
  
      private void addShortcut() {
-@@ -717,4 +721,16 @@ public class MainActivity extends WebViewExtActivity implements
+@@ -715,4 +719,16 @@ public class MainActivity extends WebViewExtActivity implements
              }
          }
      }
