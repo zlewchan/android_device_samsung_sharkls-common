@@ -1,3 +1,16 @@
+diff --git a/include/media/stagefright/ACodec.h b/include/media/stagefright/ACodec.h
+index d682632..8006024 100644
+--- a/include/media/stagefright/ACodec.h
++++ b/include/media/stagefright/ACodec.h
+@@ -348,7 +348,7 @@ protected:
+     status_t submitOutputMetadataBuffer();
+     void signalSubmitOutputMetadataBufferIfEOS_workaround();
+     status_t allocateOutputBuffersFromNativeWindow();
+-#ifdef USE_SAMSUNG_COLORFORMAT
++#if defined(USE_SAMSUNG_COLORFORMAT) || defined(USE_SPRD_COLORFORMAT)
+     void setNativeWindowColorFormat(OMX_COLOR_FORMATTYPE &eNativeColorFormat);
+ #endif
+     status_t cancelBufferToNativeWindow(BufferInfo *info);
 diff --git a/include/media/stagefright/MediaCodec.h b/include/media/stagefright/MediaCodec.h
 index 05f6581..5dc5cda 100644
 --- a/include/media/stagefright/MediaCodec.h
@@ -11,10 +24,53 @@ index 05f6581..5dc5cda 100644
  
      enum BufferFlags {
 diff --git a/media/libstagefright/ACodec.cpp b/media/libstagefright/ACodec.cpp
-index a11494d..4bc58ca 100644
+index a11494d..c051e74 100644
 --- a/media/libstagefright/ACodec.cpp
 +++ b/media/libstagefright/ACodec.cpp
-@@ -2391,6 +2391,10 @@ status_t ACodec::configureCodec(
+@@ -1031,7 +1031,7 @@ status_t ACodec::setupNativeWindowSizeFormatAndUsage(
+     memset(&mLastNativeWindowCrop, 0, sizeof(mLastNativeWindowCrop));
+     mLastNativeWindowDataSpace = HAL_DATASPACE_UNKNOWN;
+ 
+-#ifdef USE_SAMSUNG_COLORFORMAT
++#if defined(USE_SAMSUNG_COLORFORMAT) || defined(USE_SPRD_COLORFORMAT)
+     OMX_COLOR_FORMATTYPE eNativeColorFormat = def.format.video.eColorFormat;
+     setNativeWindowColorFormat(eNativeColorFormat);
+ #endif
+@@ -1041,7 +1041,7 @@ status_t ACodec::setupNativeWindowSizeFormatAndUsage(
+             nativeWindow,
+             def.format.video.nFrameWidth,
+             def.format.video.nFrameHeight,
+-#ifdef USE_SAMSUNG_COLORFORMAT
++#if defined(USE_SAMSUNG_COLORFORMAT) || defined(USE_SPRD_COLORFORMAT)
+             eNativeColorFormat,
+ #else
+             def.format.video.eColorFormat,
+@@ -1433,6 +1433,24 @@ void ACodec::setNativeWindowColorFormat(OMX_COLOR_FORMATTYPE &eNativeColorFormat
+ }
+ #endif
+ 
++#ifdef USE_SPRD_COLORFORMAT
++void ACodec::setNativeWindowColorFormat(OMX_COLOR_FORMATTYPE &eNativeColorFormat)
++{
++    // In case of SPRD, we set proper native color format for the Native Window
++    if (!strncasecmp(mComponentName.c_str(), "OMX.sprd", 8)) {
++        switch (eNativeColorFormat) {
++            case OMX_COLOR_FormatYUV420SemiPlanar:
++                eNativeColorFormat = (OMX_COLOR_FORMATTYPE)HAL_PIXEL_FORMAT_YCbCr_420_SP;
++                break;
++            case OMX_COLOR_FormatYUV420Planar:
++            default:
++                eNativeColorFormat = (OMX_COLOR_FORMATTYPE)HAL_PIXEL_FORMAT_YCbCr_420_P;
++                break;
++        }
++    }
++}
++#endif
++
+ status_t ACodec::cancelBufferToNativeWindow(BufferInfo *info) {
+     CHECK_EQ((int)info->mStatus, (int)BufferInfo::OWNED_BY_US);
+ 
+@@ -2391,6 +2409,10 @@ status_t ACodec::configureCodec(
      int32_t maxInputSize;
      if (msg->findInt32("max-input-size", &maxInputSize)) {
          err = setMinBufferSize(kPortIndexInput, (size_t)maxInputSize);
@@ -25,7 +81,7 @@ index a11494d..4bc58ca 100644
      } else if (!strcmp("OMX.Nvidia.aac.decoder", mComponentName.c_str())) {
          err = setMinBufferSize(kPortIndexInput, 8192);  // XXX
      }
-@@ -2410,6 +2414,28 @@ status_t ACodec::configureCodec(
+@@ -2410,6 +2432,28 @@ status_t ACodec::configureCodec(
          err = setOperatingRate(rateFloat, video);
      }
  
