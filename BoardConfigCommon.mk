@@ -279,6 +279,7 @@ TW_NO_EXFAT_FUSE := true
 TW_NEW_ION_HEAP := true
 TW_MTP_DEVICE := "/dev/mtp_usb"
 TW_EXCLUDE_SUPERSU := true
+TW_EXCLUDE_TWRPAPP := true
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone1/temp"
 BOARD_RECOVERY_SWIPE := true
 

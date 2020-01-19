@@ -1,3 +1,71 @@
+diff --git a/Android.mk b/Android.mk
+index 85cdd32..92575ac 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -355,6 +355,9 @@ ifneq ($(TW_DEFAULT_LANGUAGE),)
+ else
+     LOCAL_CFLAGS += -DTW_DEFAULT_LANGUAGE=en
+ endif
++ifeq ($(TW_EXCLUDE_TWRPAPP),true)
++    LOCAL_CFLAGS += -DTW_EXCLUDE_TWRPAPP
++endif
+ 
+ LOCAL_ADDITIONAL_DEPENDENCIES += \
+     dump_image \
+diff --git a/data.cpp b/data.cpp
+index 5d05d2b..a06e94d 100644
+--- a/data.cpp
++++ b/data.cpp
+@@ -839,9 +839,13 @@ void DataManager::SetDefaultValues()
+ 	mConst.SetValue("tw_oem_build", "1");
+ #else
+ 	mConst.SetValue("tw_oem_build", "0");
++  #ifdef TW_EXCLUDE_TWRPAPP
++	mConst.SetValue("tw_app_prompt", "-1");
++  #else
+ 	mPersist.SetValue("tw_app_prompt", "1");
+ 	mPersist.SetValue("tw_app_install_system", "1");
+ 	mData.SetValue("tw_app_install_status", "0"); // 0 = no status, 1 = not installed, 2 = already installed
++  #endif
+ #endif
+ 
+ 	pthread_mutex_unlock(&m_valuesLock);
+diff --git a/gui/theme/common/landscape.xml b/gui/theme/common/landscape.xml
+index c3d89fe..8b7f26b 100644
+--- a/gui/theme/common/landscape.xml
++++ b/gui/theme/common/landscape.xml
+@@ -2877,6 +2877,7 @@
+ 					<data variable="tw_military_time"/>
+ 				</listitem>
+ 				<listitem name="{@reboot_install_app_prompt_install=Prompt to install TWRP app on every reboot}">
++					<condition var1="tw_app_prompt" op="!=" var2="-1"/>
+ 					<data variable="tw_app_prompt"/>
+ 				</listitem>
+ 				<listitem name="{@simact_chk=Simulate actions for theme testing}">
+diff --git a/gui/theme/common/portrait.xml b/gui/theme/common/portrait.xml
+index f163bea..d18ebbf 100644
+--- a/gui/theme/common/portrait.xml
++++ b/gui/theme/common/portrait.xml
+@@ -3090,6 +3090,7 @@
+ 					<data variable="tw_samsung_navbar"/>
+ 				</listitem>
+ 				<listitem name="{@reboot_install_app_prompt_install=Prompt to install TWRP app on every reboot}">
++					<condition var1="tw_app_prompt" op="!=" var2="-1"/>
+ 					<data variable="tw_app_prompt"/>
+ 				</listitem>
+ 				<listitem name="{@simact_chk=Simulate actions for theme testing}">
+diff --git a/gui/theme/common/watch.xml b/gui/theme/common/watch.xml
+index d5ef869..c6a26fe 100644
+--- a/gui/theme/common/watch.xml
++++ b/gui/theme/common/watch.xml
+@@ -3595,6 +3595,7 @@
+ 					<data variable="tw_military_time"/>
+ 				</listitem>
+ 				<listitem name="{@reboot_install_app_prompt_install=Prompt to install TWRP app on every reboot}">
++					<condition var1="tw_app_prompt" op="!=" var2="-1"/>
+ 					<data variable="tw_app_prompt"/>
+ 				</listitem>
+ 				<listitem name="{@simact_chk=Simulate actions for theme testing}">
 diff --git a/minui/Android.mk b/minui/Android.mk
 index 249feeb..4bb201d 100644
 --- a/minui/Android.mk
@@ -35,3 +103,29 @@ index 5f64e1e..d3ef5d7 100644
          double_buffered = false;
  
          // Without double-buffering, we allocate RAM for a buffer to
+diff --git a/prebuilt/Android.mk b/prebuilt/Android.mk
+index f88f48f..4a25d33 100644
+--- a/prebuilt/Android.mk
++++ b/prebuilt/Android.mk
+@@ -498,11 +498,13 @@ ifneq ($(TW_EXCLUDE_SUPERSU), true)
+ 	include $(BUILD_PREBUILT)
+ endif
+ 
+-#TWRP App "placeholder"
+-include $(CLEAR_VARS)
+-LOCAL_MODULE := me.twrp.twrpapp.apk
+-LOCAL_MODULE_TAGS := eng
+-LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+-LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+-LOCAL_SRC_FILES := $(LOCAL_MODULE)
+-include $(BUILD_PREBUILT)
++ifneq ($(TW_EXCLUDE_TWRPAPP),true)
++	#TWRP App "placeholder"
++	include $(CLEAR_VARS)
++	LOCAL_MODULE := me.twrp.twrpapp.apk
++	LOCAL_MODULE_TAGS := eng
++	LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
++	LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
++	LOCAL_SRC_FILES := $(LOCAL_MODULE)
++	include $(BUILD_PREBUILT)
++endif
