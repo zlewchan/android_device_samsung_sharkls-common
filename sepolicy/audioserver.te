@@ -3,7 +3,7 @@ allow audioserver proc:file write;
 allow audioserver system_file:file execmod;
 
 allow audioserver init:unix_stream_socket connectto;
-allow audioserver media_data_file:file { getattr open read write };
+allow audioserver media_data_file:file { getattr open read write setattr create };
 allow audioserver media_prop:file { getattr open read };
 allow audioserver property_socket:sock_file write;
 

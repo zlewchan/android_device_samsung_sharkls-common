@@ -1,5 +1,7 @@
 typeattribute rild mlstrustedsubject;
 
+file_type_auto_trans(rild, system_data_file, radio_data_file)
+
 allow rild spipe_device:chr_file { read write open };
 allow rild radio_device:chr_file { read write open };
 allow rild prod_file:dir search;

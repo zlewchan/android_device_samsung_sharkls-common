@@ -3,6 +3,8 @@ type engpc_exec, exec_type, file_type;
 
 init_daemon_domain(engpc)
 
+file_type_auto_trans(engpc, system_data_file, engpc_data)
+
 allow engpc serial_device:chr_file { read write open ioctl };
 allow engpc sysfs:file write;
 allow engpc system_data_file:dir { rw_file_perms add_name create remove_name setattr };
