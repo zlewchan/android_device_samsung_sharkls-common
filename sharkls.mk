@@ -332,12 +332,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Default props
 ADDITIONAL_DEFAULT_PROPERTIES += \
     telephony.lteOnCdmaDevice=0 \
-    ro.telephony.default_cdma_sub=1 \
     persist.radio.apm_sim_not_pwdn=1 \
-    persist.radio.add_power_save=1 \
     rild.libpath=/system/lib/libsec-ril.so \
     rild.libpath2=/system/lib/libsec-ril-dsds.so \
-    persist.security.ams.enforcing=1
+    persist.security.ams.enforcing=3
 
 # We have enough storage space to hold precise GC data
 PRODUCT_TAGS += dalvik.gc.type-precise
