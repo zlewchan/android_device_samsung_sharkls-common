@@ -112,7 +112,7 @@ on boot
     write /sys/class/android_usb/android0/f_mass_storage/board_support_luns 1
 
 # SSWAP
-    write /proc/sys/vm/swappiness 130
+    write /proc/sys/vm/swappiness 35
 
 # bluetooth
     chmod 660 /dev/ttyS0
