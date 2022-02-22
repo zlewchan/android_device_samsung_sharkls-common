@@ -41,7 +41,6 @@ LOCAL_SHARED_LIBRARIES := \
 LOCAL_CFLAGS := \
 
 LOCAL_MODULE:= radiooptions
-LOCAL_MODULE_TAGS := debug
 
 include $(BUILD_EXECUTABLE)
 
